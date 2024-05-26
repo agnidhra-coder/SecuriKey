@@ -4,4 +4,9 @@
     <string name="register">Register</string>
     <string name="webclient_id">922101847817-3nr0cg744ja7biddsa9489fe18242vjd.apps.googleusercontent.com</string>
     <string name="master_password">Master Password</string>
+    <string name="website">Website</string>
+    <string name="url">URL</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>
