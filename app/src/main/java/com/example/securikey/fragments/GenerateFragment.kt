@@ -1,11 +1,19 @@
 package com.example.securikey.fragments
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.securikey.R
 import com.example.securikey.databinding.FragmentGenerateBinding
 import java.util.concurrent.ThreadLocalRandom
@@ -14,6 +22,7 @@ import java.util.concurrent.ThreadLocalRandom
 class GenerateFragment : Fragment() {
     private var generateFragmentBinding: FragmentGenerateBinding? = null
     private val binding get() = generateFragmentBinding!!
+    private lateinit var clipboardManager: ClipboardManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,11 +30,14 @@ class GenerateFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         generateFragmentBinding = FragmentGenerateBinding.inflate(inflater, container, false)
-        return inflater.inflate(R.layout.fragment_generate, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        clipboardManager = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
 
         setPasswordEt()
 
@@ -35,43 +47,86 @@ class GenerateFragment : Fragment() {
 
         binding.lengthSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.counterTxt.text = progress.toString()
-                setPasswordEt()
+                binding.counterTxt.setText(progress.toString())
+
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                TODO("Not yet implemented")
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                TODO("Not yet implemented")
+                setPasswordEt()
             }
         })
+
+        binding.letterCB.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                setPasswordEt()
+                binding.digitCB.isEnabled = true
+            } else{
+                binding.digitCB.isChecked = true
+                binding.digitCB.isEnabled = false
+                setPasswordEt()
+            }
+        }
+
+        binding.digitCB.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                setPasswordEt()
+                binding.letterCB.isEnabled = true
+            } else{
+
+                binding.letterCB.isChecked = true
+                binding.letterCB.isEnabled = false
+                setPasswordEt()
+            }
+        }
+
+        binding.symbolCB.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                setPasswordEt()
+            } else{
+                setPasswordEt()
+            }
+        }
+
+        binding.reloadBtn.setOnClickListener {
+            setPasswordEt()
+        }
+
+        binding.copyBtn.setOnClickListener {
+            clipboardManager.setPrimaryClip(ClipData.newPlainText("PASSWORD", binding.passwordEt.text.toString()))
+            Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
-    fun generate(length: Int, letters: Boolean, digits: Boolean, symbols: Boolean) : String{
-        var MIN_CODE = 33;
-        var MAX_CODE = 126;
-        val builder = StringBuilder()
+    private fun generate(length: Int, letters: Boolean, digits: Boolean, symbols: Boolean) : String{
+        val charset = (('a'..'z') + ('A'..'Z') + ('0'..'9') + listOf(
+            '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+',
+            '[', ']', '{', '}', ';', ':', '\'', '\"', ',', '.', '<', '>', '/', '?'
+        )).toMutableList()
+
+        if(!symbols){
+            charset -= listOf(
+                '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+',
+                '[', ']', '{', '}', ';', ':', '\'', '\"', ',', '.', '<', '>', '/', '?'
+            )
+        }
 
         if(!letters){
-            MAX_CODE = 64
-            binding.digitCB.isChecked = true
-            binding.digitCB.isEnabled = false
+            charset -=  ('a'..'z')
+            charset -=  ('A'..'Z')
         }
 
-        if(!digits){
-            MIN_CODE = 58
-            binding.letterCB.isChecked = true
-            binding.letterCB.isEnabled = false
-        }
-        
-
-        for (i in 0..<length){
-            builder.append(ThreadLocalRandom.current().nextInt(MIN_CODE, MAX_CODE+1).toString())
+        else if(!digits){
+            charset -= ('0'..'9')
         }
 
-        return builder.toString()
+
+        return (1..length)
+            .map { charset.random() }
+            .joinToString("")
     }
 
     fun setPasswordEt(){

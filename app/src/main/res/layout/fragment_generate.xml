@@ -21,9 +21,12 @@
 
         <EditText
             android:id="@+id/passwordEt"
-            android:inputType="none"
-            android:focusable="false"
-            android:layout_width="match_parent"
+            android:editable="false"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:scrollbars="horizontal"
+            android:scrollHorizontally="true"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
@@ -39,14 +42,13 @@
 
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/seekBarLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.185">
+        app:layout_constraintBottom_toTopOf="@id/checkboxLL"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/lengthSeekBar"
@@ -75,6 +77,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/checkboxLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -83,17 +86,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@id/seekBarLL">
         <CheckBox
             android:id="@+id/letterCB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="Use Letters"/>
 
         <CheckBox
             android:id="@+id/digitCB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="Use Digits" />
 
         <CheckBox
@@ -103,8 +108,17 @@
             android:text="Use Symbols (!@#%^)"/>
     </LinearLayout>
 
-    
-
+    <Button
+        android:id="@+id/copyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Copy"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkboxLL"
+        app:layout_constraintVertical_bias="0.184" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
