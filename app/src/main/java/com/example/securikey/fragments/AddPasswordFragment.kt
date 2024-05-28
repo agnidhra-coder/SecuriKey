@@ -1,14 +1,20 @@
 package com.example.securikey.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.securikey.CryptoManager
+import com.example.securikey.MainActivity
 import com.example.securikey.R
 import com.example.securikey.databinding.FragmentAddPasswordBinding
+import com.example.securikey.room.Password
 import com.example.securikey.viewmodel.PasswordViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import java.io.ByteArrayOutputStream
+import java.util.Date
 
 class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_password) {
     private var addPasswordBinding: FragmentAddPasswordBinding? = null
@@ -17,6 +23,7 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
 
     private lateinit var passwordViewModel: PasswordViewModel
     private lateinit var addPasswordView: View
+    private lateinit var encryptedString: String
 
 
     override fun onCreateView(
@@ -30,6 +37,8 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        passwordViewModel = (activity as MainActivity).passwordViewModel
 
         /*bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetAddPw)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -56,10 +65,36 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
                 binding.emailContainer.helperText = validEmail(binding.emailEt.text.toString())
             }
         }
-        binding.pwEt.setOnFocusChangeListener { _, focused ->
-            if(!focused){
-                binding.pwContainer.helperText = validPassword(binding.pwEt.text.toString())
+//        binding.pwEt.setOnFocusChangeListener { _, focused ->
+//            if(!focused){
+//                binding.pwContainer.helperText = validPassword(binding.pwEt.text.toString())
+//            }
+//        }
+
+        binding.saveBtn.setOnClickListener {
+            if(binding.websiteNameEt.text.toString().isNotEmpty() && binding.websiteUrlEt.text
+                .toString().isNotEmpty() && binding.usernameEt.text.toString().isNotEmpty() &&
+                binding.emailEt.text.toString().isNotEmpty() && binding.pwEt.text.toString().isNotEmpty())
+            {
+                savePassword()
+            } else{
+                if (binding.websiteNameEt.text.toString().isEmpty()){
+                    binding.websiteNameContainer.helperText = "Required"
+                }
+                if (binding.websiteUrlEt.text.toString().isEmpty()){
+                    binding.websiteUrlContainer.helperText = "Required"
+                }
+                if (binding.usernameEt.text.toString().isEmpty()){
+                    binding.usernameContainer.helperText = "Required"
+                }
+                if (binding.emailEt.text.toString().isEmpty()){
+                    binding.emailContainer.helperText = "Required"
+                }
+                if (binding.pwEt.text.toString().isEmpty()){
+                    binding.pwContainer.helperText = "Required"
+                }
             }
+
         }
 
     }
@@ -102,7 +137,44 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
             return "Must contain 1 special character"
         }
 
+        binding.saveBtn.setOnClickListener{
+            savePassword()
+        }
 
         return null
     }
+
+    private fun savePassword(){
+        val websiteName = binding.websiteNameEt.text.toString().trim()
+        val websiteUrl = binding.websiteUrlEt.text.toString().trim()
+        val username = binding.usernameEt.text.toString().trim()
+        val email = binding.emailEt.text.toString().trim()
+        val pw = binding.pwEt.text.toString()
+        Log.i("pw", pw)
+
+        try {
+            val password = Password(0, websiteName, websiteUrl, email, username, encryptedPassword
+                (pw), Date())
+            passwordViewModel.insertPW(password)
+        } catch (e: Exception){
+            Log.i("AddPasswordFragment", "$e")
+        }
+
+
+    }
+
+    private fun encryptedPassword(pw: String) : String{
+        val bytes = pw.toByteArray(Charsets.UTF_8)
+        Log.i("bytes", bytes.toString())
+        encryptedString = CryptoManager().encrypt(pw)
+        Log.i("encryptedPassword", encryptedString)
+
+        return encryptedString
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        addPasswordBinding = null
+    }
+
 }

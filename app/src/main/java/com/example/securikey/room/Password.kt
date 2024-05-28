@@ -15,6 +15,7 @@ data class Password(
     val siteName: String,
     val siteUrl: String,
     val email: String,
+    val username: String,
     val password: String,
     val createdDate: Date
 ): Parcelable

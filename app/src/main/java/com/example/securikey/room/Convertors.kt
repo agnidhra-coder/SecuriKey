@@ -5,7 +5,7 @@ import java.util.Date
 
 class Convertors {
     @TypeConverter
-    fun fromDateToLong(value : Date) : Long{
+    fun fromDateToLong(value: Date) : Long{
         return value.time
     }
 

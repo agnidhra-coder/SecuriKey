@@ -3,7 +3,7 @@
     <style name="Base.Theme.SecuriKey" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
 <!--         <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <item name="android:background">@color/darkGrey</item>
+        <item name="android:background">@color/bgGrey</item>
         <item name="android:fontFamily">@font/poppins</item>
     </style>
 </resources>
