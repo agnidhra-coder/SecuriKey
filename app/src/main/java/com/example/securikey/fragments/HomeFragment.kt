@@ -1,6 +1,7 @@
 package com.example.securikey.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,10 +34,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
 
         passwordsViewModel = (activity as MainActivity).passwordViewModel
+        setupRecyclerView()
     }
 
     private fun setupRecyclerView() {
-        passwordAdapter = PasswordAdapter()
+        passwordAdapter = PasswordAdapter(requireContext())
         binding.rvPasswords.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             setHasFixedSize(true)
@@ -45,7 +47,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         activity?.let {
             passwordsViewModel.getAllPW().observe(viewLifecycleOwner) { passwords ->
+                Log.i("HomeRecyclerView", "$passwords")
                 passwordAdapter.differ.submitList(passwords)
+//                passwordAdapter.submitList(passwords)
+                passwordAdapter.notifyDataSetChanged()
             }
         }
 

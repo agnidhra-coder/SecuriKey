@@ -1,8 +1,8 @@
 package com.example.securikey.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -10,16 +10,16 @@ import com.example.securikey.databinding.EachEntryBinding
 //import com.example.securikey.fragments.HomeFragmentDirections
 import com.example.securikey.room.Password
 
-class PasswordAdapter : RecyclerView.Adapter<PasswordAdapter.PasswordViewHolder>() {
+class PasswordAdapter(val context: Context) : RecyclerView.Adapter<PasswordAdapter
+    .PasswordViewHolder>() {
     class PasswordViewHolder(val itemBinding: EachEntryBinding) : RecyclerView.ViewHolder
-        (itemBinding.root){
+        (itemBinding.root){}
 
-    }
+    private val passwords = ArrayList<Password>()
 
     private val differCallback = object : DiffUtil.ItemCallback<Password>(){
         override fun areItemsTheSame(oldItem: Password, newItem: Password): Boolean {
             return oldItem.id == newItem.id &&
-                    oldItem.siteName == newItem.siteName &&
                     oldItem.siteUrl == newItem.siteUrl
         }
 
@@ -36,6 +36,11 @@ class PasswordAdapter : RecyclerView.Adapter<PasswordAdapter.PasswordViewHolder>
 
     override fun getItemCount(): Int {
         return differ.currentList.size
+    }
+
+    fun submitList(courses: MutableList<Password>) {
+        courses.clear()
+        courses.addAll(courses)
     }
 
     override fun onBindViewHolder(holder: PasswordViewHolder, position: Int) {

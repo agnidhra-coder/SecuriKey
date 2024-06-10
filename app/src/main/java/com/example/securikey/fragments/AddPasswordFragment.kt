@@ -15,6 +15,7 @@ import com.example.securikey.viewmodel.PasswordViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.io.ByteArrayOutputStream
 import java.util.Date
+import javax.crypto.spec.IvParameterSpec
 
 class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_password) {
     private var addPasswordBinding: FragmentAddPasswordBinding? = null
@@ -65,11 +66,11 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
                 binding.emailContainer.helperText = validEmail(binding.emailEt.text.toString())
             }
         }
-//        binding.pwEt.setOnFocusChangeListener { _, focused ->
-//            if(!focused){
-//                binding.pwContainer.helperText = validPassword(binding.pwEt.text.toString())
-//            }
-//        }
+        binding.pwEt.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.pwContainer.helperText = validPassword(binding.pwEt.text.toString())
+            }
+        }
 
         binding.saveBtn.setOnClickListener {
             if(binding.websiteNameEt.text.toString().isNotEmpty() && binding.websiteUrlEt.text
@@ -150,12 +151,14 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
         val username = binding.usernameEt.text.toString().trim()
         val email = binding.emailEt.text.toString().trim()
         val pw = binding.pwEt.text.toString()
+        val iv = CryptoManager().generateIv()
         Log.i("pw", pw)
 
         try {
             val password = Password(0, websiteName, websiteUrl, email, username, encryptedPassword
-                (pw), Date())
+                (pw, iv), Date())
             passwordViewModel.insertPW(password)
+            dismiss()
         } catch (e: Exception){
             Log.i("AddPasswordFragment", "$e")
         }
@@ -163,10 +166,8 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
 
     }
 
-    private fun encryptedPassword(pw: String) : String{
-        val bytes = pw.toByteArray(Charsets.UTF_8)
-        Log.i("bytes", bytes.toString())
-        encryptedString = CryptoManager().encrypt(pw)
+    private fun encryptedPassword(pw: String, iv: IvParameterSpec) : String{
+        encryptedString = CryptoManager().encrypt(pw, iv)
         Log.i("encryptedPassword", encryptedString)
 
         return encryptedString

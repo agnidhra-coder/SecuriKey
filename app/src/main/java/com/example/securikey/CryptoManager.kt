@@ -1,7 +1,9 @@
 package com.example.securikey
 
+import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import java.io.InputStream
 import java.security.KeyStore
 import java.security.SecureRandom
@@ -21,17 +23,27 @@ class CryptoManager {
         return existingKey?.secretKey ?: createKey()
     }
 
-    private val key = "Hello7809hh"
-    private val secretKeySpec = SecretKeySpec(key.toByteArray(), "AES")
+    private val key = getKey()
 
-    private val encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
-        init(Cipher.ENCRYPT_MODE, getKey(), generateIv())
+    private val encryptCipher = Cipher.getInstance(TRANSFORMATION).apply {
+        init(Cipher.ENCRYPT_MODE, key, generateIv())
     }
+
+    private fun getEncryptCipherForIv(iv: IvParameterSpec): Cipher{
+        return Cipher.getInstance(TRANSFORMATION).apply {
+            init(Cipher.ENCRYPT_MODE, key, iv)
+        }
+    }
+
 
     private fun getDecryptCipherForIv(iv: ByteArray): Cipher{
         return Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.DECRYPT_MODE, getKey(), IvParameterSpec(iv))
+            init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
         }
+    }
+
+    private val decryptCipher = Cipher.getInstance(TRANSFORMATION).apply {
+        init(Cipher.DECRYPT_MODE, key, generateIv())
     }
 
 
@@ -58,33 +70,35 @@ class CryptoManager {
     fun generateIv(): IvParameterSpec {
         val iv = ByteArray(16)
         SecureRandom().nextBytes(iv)
-        return IvParameterSpec(iv)
+        val ivParameterSpec = IvParameterSpec(iv)
+        Log.i("iv", ivParameterSpec.toString())
+        return ivParameterSpec
     }
 
-    fun encrypt(string: String): String{
-        val encryptedBytes = encryptCipher.doFinal(string.toByteArray())
+    fun encrypt(string: String, iv: IvParameterSpec): String{
+        val encryptedBytes = getEncryptCipherForIv(iv).doFinal(string.toByteArray())
         return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
-    fun decrypt(inputStream: InputStream): ByteArray{
-        return inputStream.use {
-            val ivSize = it.read()
-            val iv = ByteArray(ivSize)
-            it.read(iv)
-
-            val encryptedBytesSize = it.read()
-            val encryptedBytes = ByteArray(encryptedBytesSize)
-            it.read(encryptedBytes)
-
-            getDecryptCipherForIv(iv).doFinal(encryptedBytes)
-        }
-    }
+//    fun decrypt(encryptedString: String): String {
+//        return inputStream.use {
+//            val ivSize = it.read()
+//            val iv = ByteArray(ivSize)
+//            it.read(iv)
+//
+//            val encryptedBytesSize = it.read()
+//            val encryptedBytes = ByteArray(encryptedBytesSize)
+//            it.read(encryptedBytes)
+//
+//            getDecryptCipherForIv(iv).doFinal(encryptedBytes)
+//        }
+//    }
 
     companion object{
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
         private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC
         private const val PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7
-        private const val TRANSFORMATION = "AES/CBC/PKCS5Padding"
+        private const val TRANSFORMATION = "$ALGORITHM/$BLOCK_MODE/$PADDING"
 
     }
 }
