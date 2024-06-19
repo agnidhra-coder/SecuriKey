@@ -22,5 +22,5 @@ interface PasswordDAO {
     fun getAllPW() : LiveData<List<Password>>
 
     @Query("SELECT * FROM Entries WHERE siteName LIKE :query OR siteUrl LIKE :query")
-    fun searchNote(query: String?) : LiveData<List<Password>>
+    fun searchPW(query: String?) : LiveData<List<Password>>
 }

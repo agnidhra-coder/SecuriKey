@@ -90,4 +90,13 @@ dependencies {
     // Annotation processor
     ksp("androidx.lifecycle:lifecycle-compiler:$lifecycleVersion")
 
+    // Jetpack Security
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("androidx.security:security-crypto:1.0.0")
+
+    // QR
+    implementation ("com.google.zxing:core:3.2.0")
+    implementation ("com.github.yuriy-budiyev:code-scanner:2.3.0")
+
+
 }

@@ -5,6 +5,10 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI.setupWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.securikey.databinding.ActivityMainBinding
 import com.example.securikey.fragments.AddPasswordFragment
 import com.example.securikey.fragments.GenerateFragment
@@ -21,7 +25,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var cryptoManager: CryptoManager
+//    private lateinit var cryptoManager: CryptoManager
     lateinit var passwordViewModel: PasswordViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,23 +35,29 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setupViewModel()
 
+//        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+//        val navController = navHostFragment.navController
         binding.bottomNavView.background = null
         binding.bottomNavView.menu.getItem(2).isEnabled = false
 
-        cryptoManager = CryptoManager()
+//        cryptoManager = CryptoManager()
 
-        replaceWithFragment(HomeFragment())
+        replaceWithFragment(HomeFragment(), "home")
 
         binding.bottomNavView.setOnItemSelectedListener{
             when(it.itemId){
-                R.id.home -> replaceWithFragment(HomeFragment())
-                R.id.generate -> replaceWithFragment(GenerateFragment())
-                R.id.share -> replaceWithFragment(ShareFragment())
-                R.id.profile -> replaceWithFragment(ProfileFragment())
+                R.id.homeFragment -> replaceWithFragment(HomeFragment(), "home")
+                R.id.generateFragment -> replaceWithFragment(GenerateFragment(), "generate")
+                R.id.shareFragment -> replaceWithFragment(ShareFragment(), "share")
+                R.id.profileFragment -> replaceWithFragment(ProfileFragment(), "profile")
                 else -> {}
             }
             true
         }
+
+
+//        setupWithNavController(binding.bottomNavView, navController)
+//        binding.bottomNavView.setupWithNavController(navController)
 
         binding.addPwFAB.setOnClickListener{
             val addPasswordFragment = AddPasswordFragment()
@@ -57,10 +67,29 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun replaceWithFragment(fragment: Fragment){
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, fragment)
-        fragmentTransaction.commit()
+    private fun replaceWithFragment(fragment: Fragment, tag: String){
+//        val fragmentTransaction = supportFragmentManager.beginTransaction()
+//        fragmentTransaction.replace(R.id.fragment_container, fragment)
+//        fragmentTransaction.commit()
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
+        binding.bottomNavView.setupWithNavController(navController)
+
+//        val fragmentTransaction = supportFragmentManager.beginTransaction()
+//
+//        // Hide all fragments
+//        supportFragmentManager.fragments.forEach { fragmentTransaction.hide(it) }
+//
+//        // Check if the fragment is already added to the fragment manager
+//        if (supportFragmentManager.findFragmentByTag(tag) == null) {
+//            fragmentTransaction.add(R.id.fragment_container, fragment, tag)
+//        } else {
+//            fragmentTransaction.show(fragment)
+//        }
+//
+//        fragmentTransaction.commit()
+
     }
 
     private fun setupViewModel(){

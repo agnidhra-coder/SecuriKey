@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ class GenerateFragment : Fragment() {
     private var generateFragmentBinding: FragmentGenerateBinding? = null
     private val binding get() = generateFragmentBinding!!
     private lateinit var clipboardManager: ClipboardManager
+    private lateinit var password : String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,6 +101,7 @@ class GenerateFragment : Fragment() {
             Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
         }
 
+        password = binding.passwordEt.text.toString()
     }
 
     private fun generate(length: Int, letters: Boolean, digits: Boolean, symbols: Boolean) : String{
@@ -133,5 +136,38 @@ class GenerateFragment : Fragment() {
         binding.passwordEt.setText(generate(binding.lengthSeekBar.progress, binding
             .letterCB.isChecked, binding.digitCB.isChecked, binding.symbolCB.isChecked))
     }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i("onStart", "Called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("onResume", "Called")
+    }
+    override fun onPause() {
+        super.onPause()
+        Log.i("onPause", "Called")
+    }
+    override fun onStop() {
+        super.onStop()
+        Log.i("onStop", "Called")
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("onDestroy", "Called")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.i("onDestroyView", "Called")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.i("onDetach", "Called")
+    }
+
 
 }

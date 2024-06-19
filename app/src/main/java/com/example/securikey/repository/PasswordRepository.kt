@@ -10,5 +10,5 @@ class PasswordRepository(private val db: PasswordDatabase) {
 
     fun getAllPW() = db.passwordDao().getAllPW()
 
-    fun searchPW(query: String?) = db.passwordDao().searchNote(query)
+    fun searchPW(query: String?) = db.passwordDao().searchPW(query)
 }

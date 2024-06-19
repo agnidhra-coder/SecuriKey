@@ -14,6 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <ImageButton
+            android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/round_arrow_back_24"
@@ -30,6 +31,7 @@
             />
 
         <ImageButton
+            android:id="@+id/editBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/edit"
@@ -38,63 +40,163 @@
             android:layout_marginEnd="30dp"/>
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <TextView
+        android:id="@+id/siteNameTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="Hello"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.055"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/entryDetailsToolbar" />
+
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/entryDetailsCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        app:cardCornerRadius="16dp"
         app:cardBackgroundColor="@color/darkGrey"
+        app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/entryDetailsToolbar">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_margin="16dp"
-            android:background="@null">
-            <TextView
-                android:id="@+id/websiteLinkTv"
+            android:background="@null"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@null"
-                android:drawableStart="@drawable/url"/>
+                android:orientation="horizontal"
+                android:background="@color/transparent">
+                <TextView
+                    android:id="@+id/siteUrlTv"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:drawableStart="@drawable/url"
+                    android:drawablePadding="10dp" />
+                <ImageButton
+                    android:id="@+id/copyUrlBtn"
+                    android:background="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:paddingStart="10dp"
+                    android:src="@drawable/copy"/>
+            </LinearLayout>
+
+
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginVertical="10dp"
-                android:layout_gravity="bottom"/>
-            <TextView
-                android:id="@+id/usernameTv"
+                android:layout_gravity="bottom"
+                android:layout_marginVertical="10dp" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@null"
-                android:drawableStart="@drawable/username"/>
+                android:background="@color/transparent"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/usernameTv"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@null"
+                    android:drawableStart="@drawable/username"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"/>
+                <ImageButton
+                    android:id="@+id/copyUsernameBtn"
+                    android:background="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:paddingStart="10dp"
+                    android:src="@drawable/copy"/>
+            </LinearLayout>
+
+
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginVertical="10dp"
-                android:layout_gravity="bottom"/>
-            <TextView
-                android:id="@+id/emailTv"
+                android:layout_gravity="bottom"
+                android:layout_marginVertical="10dp" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@null"
-                android:drawableStart="@drawable/email"/>
+                android:orientation="horizontal"
+                android:background="@color/transparent">
+                <TextView
+                    android:id="@+id/emailTv"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:drawableStart="@drawable/email"
+                    android:drawablePadding="10dp"/>
+                <ImageButton
+                    android:id="@+id/copyEmailBtn"
+                    android:background="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:paddingStart="10dp"
+                    android:src="@drawable/copy"/>
+            </LinearLayout>
+
+
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginVertical="10dp"
-                android:layout_gravity="bottom"/>
-            <TextView
-                android:id="@+id/passwordTv"
+                android:layout_gravity="bottom"
+                android:layout_marginVertical="10dp" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@null"
-                android:drawableStart="@drawable/password"/>
+                android:background="@color/transparent"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/passwordTv"
+                    android:layout_width="232dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@null"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:inputType="textPassword"
+                    android:text="password"
+                    app:drawableStartCompat="@drawable/password" />
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/showPasswordBtn"
+                    android:background="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/show_hide_pw"
+                    />
+                <ImageButton
+                    android:id="@+id/copyPwBtn"
+                    android:background="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:paddingStart="10dp"
+                    android:src="@drawable/copy" />
+            </LinearLayout>
+
 
         </LinearLayout>
 

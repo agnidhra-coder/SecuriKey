@@ -1,60 +1,185 @@
 package com.example.securikey.fragments
 
 import android.os.Bundle
+import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.securikey.CryptoManager
+import com.example.securikey.MainActivity
 import com.example.securikey.R
+import com.example.securikey.crypto.EncryptDecrypt
+import com.example.securikey.databinding.FragmentEditEntryBinding
+import com.example.securikey.room.Password
+import com.example.securikey.viewmodel.PasswordViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import java.util.Date
+import javax.crypto.spec.IvParameterSpec
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EditEntryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class EditEntryFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+class EditEntryFragment : Fragment(R.layout.fragment_edit_entry) {
+    private var editEntryBinding: FragmentEditEntryBinding? = null
+    private val binding get() = editEntryBinding!!
+    private lateinit var passwordViewModel: PasswordViewModel
+    private lateinit var encryptedString: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_entry, container, false)
+        editEntryBinding = FragmentEditEntryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EditEntryFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EditEntryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        passwordViewModel = (activity as MainActivity).passwordViewModel
+
+        binding.websiteNameEt.setText(requireArguments().getString("siteName"))
+        binding.websiteUrlEt.setText(requireArguments().getString("siteUrl"))
+        binding.usernameEt.setText(requireArguments().getString("username"))
+        binding.emailEt.setText(requireArguments().getString("email"))
+        binding.pwEt.setText(requireArguments().getString("password"))
+
+        binding.websiteNameEt.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.websiteNameContainer.helperText = emptyField(binding.websiteNameEt.text.toString())
+            }
+        }
+        binding.websiteUrlEt.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.websiteUrlContainer.helperText = emptyField(binding.websiteUrlEt.text.toString())
+            }
+        }
+        binding.usernameEt.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.usernameContainer.helperText = emptyField(binding.usernameEt.text.toString())
+            }
+        }
+        binding.emailEt.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.emailContainer.helperText = validEmail(binding.emailEt.text.toString())
+            }
+        }
+        binding.pwEt.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.pwContainer.helperText = validPassword(binding.pwEt.text.toString())
+            }
+        }
+
+        binding.saveBtn.setOnClickListener {
+            if(binding.websiteNameEt.text.toString().isNotEmpty() && binding.websiteUrlEt.text
+                    .toString().isNotEmpty() && binding.usernameEt.text.toString().isNotEmpty() &&
+                binding.emailEt.text.toString().isNotEmpty() && binding.pwEt.text.toString().isNotEmpty())
+            {
+                savePassword()
+            } else{
+                if (binding.websiteNameEt.text.toString().isEmpty()){
+                    binding.websiteNameContainer.helperText = "Required"
+                }
+                if (binding.websiteUrlEt.text.toString().isEmpty()){
+                    binding.websiteUrlContainer.helperText = "Required"
+                }
+                if (binding.usernameEt.text.toString().isEmpty()){
+                    binding.usernameContainer.helperText = "Required"
+                }
+                if (binding.emailEt.text.toString().isEmpty()){
+                    binding.emailContainer.helperText = "Required"
+                }
+                if (binding.pwEt.text.toString().isEmpty()){
+                    binding.pwContainer.helperText = "Required"
                 }
             }
+        }
+
+        binding.closeBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
     }
+
+    private fun validEmail(emailText: String): String? {
+        if(emailText.isNotEmpty()){
+            if(!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()){
+                return "Invalid Email Address"
+            }
+        }
+        else{
+            return "Required"
+        }
+
+        return null
+    }
+
+    private fun emptyField(fieldName : String) : String?{
+        if(fieldName.isEmpty()){
+            return "Required"
+        }
+        return null
+    }
+
+    private fun validPassword(pwText : String) : String?{
+        if(pwText.length < 8){
+            return "Minimum 8 character password"
+        }
+        if(!pwText.matches(".*[A-Z].*".toRegex())){
+            return "Must contain 1 uppercase character"
+        }
+        if(!pwText.matches(".*[a-z].*".toRegex())){
+            return "Must contain 1 lowercase character"
+        }
+        if(!pwText.matches(".*[0-9].*".toRegex())){
+            return "Must contain 1 digit"
+        }
+        if(!pwText.matches(".*[!@#\$%^&+=\\-_()].*".toRegex())){
+            return "Must contain 1 special character"
+        }
+
+        binding.saveBtn.setOnClickListener{
+            savePassword()
+        }
+
+        return null
+    }
+
+    private fun savePassword(){
+        val websiteName = binding.websiteNameEt.text.toString().trim()
+        val websiteUrl = binding.websiteUrlEt.text.toString().trim()
+        val username = binding.usernameEt.text.toString().trim()
+        val email = binding.emailEt.text.toString().trim()
+        val pw = binding.pwEt.text.toString()
+
+        try {
+            val password = Password(requireArguments().getLong("id"), websiteName, websiteUrl,
+                email,
+                username,
+                encryptedPassword
+                (pw), Date()
+            )
+            passwordViewModel.updatePW(password)
+            findNavController().navigate(R.id.action_editEntryFragment_to_homeFragment)
+        } catch (e: Exception){
+            Log.i("EditEntryFragment", "$e")
+        }
+
+
+    }
+
+    private fun encryptedPassword(pw: String) : String{
+        encryptedString = EncryptDecrypt().encrypt(pw)
+        Log.i("encryptedPassword", encryptedString)
+
+        return encryptedString
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        editEntryBinding = null
+    }
+
+
 }

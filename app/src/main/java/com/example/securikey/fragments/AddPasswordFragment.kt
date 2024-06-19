@@ -6,16 +6,15 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.securikey.CryptoManager
+import androidx.navigation.findNavController
 import com.example.securikey.MainActivity
 import com.example.securikey.R
+import com.example.securikey.crypto.EncryptDecrypt
 import com.example.securikey.databinding.FragmentAddPasswordBinding
 import com.example.securikey.room.Password
 import com.example.securikey.viewmodel.PasswordViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import java.io.ByteArrayOutputStream
 import java.util.Date
-import javax.crypto.spec.IvParameterSpec
 
 class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_password) {
     private var addPasswordBinding: FragmentAddPasswordBinding? = null
@@ -23,8 +22,8 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
 //    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
     private lateinit var passwordViewModel: PasswordViewModel
-    private lateinit var addPasswordView: View
-    private lateinit var encryptedString: String
+    private lateinit var combinedData: ByteArray
+    lateinit var iv: ByteArray
 
 
     override fun onCreateView(
@@ -98,6 +97,10 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
 
         }
 
+        binding.closeBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
+
     }
 
     private fun validEmail(emailText: String): String? {
@@ -151,12 +154,17 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
         val username = binding.usernameEt.text.toString().trim()
         val email = binding.emailEt.text.toString().trim()
         val pw = binding.pwEt.text.toString()
-        val iv = CryptoManager().generateIv()
-        Log.i("pw", pw)
+
+
+        val cipherText = EncryptDecrypt().encrypt(pw)
+//        val combinedData = iv.toString() + cipherText
+
+//        val ivStored = iv
+//        Log.i("iv", "$iv")
+//        Log.i("iv", "$ivStored")
 
         try {
-            val password = Password(0, websiteName, websiteUrl, email, username, encryptedPassword
-                (pw, iv), Date())
+            val password = Password(0, websiteName, websiteUrl, email, username, cipherText, Date())
             passwordViewModel.insertPW(password)
             dismiss()
         } catch (e: Exception){
@@ -166,12 +174,11 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
 
     }
 
-    private fun encryptedPassword(pw: String, iv: IvParameterSpec) : String{
-        encryptedString = CryptoManager().encrypt(pw, iv)
-        Log.i("encryptedPassword", encryptedString)
-
-        return encryptedString
-    }
+//    private fun encryptedPassword(pw: String, iv: ByteArray) : String{
+//        val cipherText = CryptoManager().encrypt(pw, iv)
+//
+//        return cipherText
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
