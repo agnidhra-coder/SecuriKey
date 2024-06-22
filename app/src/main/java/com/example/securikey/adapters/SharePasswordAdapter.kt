@@ -48,6 +48,7 @@ class SharePasswordAdapter : RecyclerView.Adapter<SharePasswordAdapter.SharePass
             val decryptedPassword = EncryptDecrypt().decrypt(current.password)
             it.findNavController().navigate(R.id.action_shareFragment_to_passwordQRFragment, Bundle().apply {
                 putString("password", decryptedPassword)
+                putString("siteName", current.siteName)
             })
         }
     }

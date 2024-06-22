@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ScanQR">
+
+    <com.budiyev.android.codescanner.CodeScannerView
+        android:id="@+id/scanner_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:flashButtonOffIcon="@drawable/flash_on"
+        app:flashButtonOnIcon="@drawable/flash_off"
+        app:maskColor="#94303030" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/cameraPermissionBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:text="Add Camera Permissions"
+        android:textAllCaps="false"/>
+
+
+</FrameLayout>

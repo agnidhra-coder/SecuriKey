@@ -1,21 +1,19 @@
 package com.example.securikey.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.securikey.MainActivity
 import com.example.securikey.R
+import com.example.securikey.ScanQR
 import com.example.securikey.adapters.SharePasswordAdapter
 import com.example.securikey.databinding.FragmentShareBinding
 import com.example.securikey.viewmodel.PasswordViewModel
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class ShareFragment : Fragment() {
     private var shareBinding: FragmentShareBinding? = null
@@ -37,6 +35,11 @@ class ShareFragment : Fragment() {
 
         passwordsViewModel = (activity as MainActivity).passwordViewModel
         setupRecyclerView()
+
+        binding.scanQrTV.setOnClickListener{
+            val intent = Intent(requireContext(), ScanQR::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupRecyclerView() {

@@ -36,7 +36,7 @@ class EditEntryFragment : Fragment(R.layout.fragment_edit_entry) {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated( view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         passwordViewModel = (activity as MainActivity).passwordViewModel
 

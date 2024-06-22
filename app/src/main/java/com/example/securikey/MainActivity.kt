@@ -25,8 +25,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-//    private lateinit var cryptoManager: CryptoManager
     lateinit var passwordViewModel: PasswordViewModel
+    val promptManager by lazy {
+        BiometricPromptManager(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +41,6 @@ class MainActivity : AppCompatActivity() {
 //        val navController = navHostFragment.navController
         binding.bottomNavView.background = null
         binding.bottomNavView.menu.getItem(2).isEnabled = false
-
-//        cryptoManager = CryptoManager()
 
         replaceWithFragment(HomeFragment(), "home")
 

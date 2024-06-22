@@ -46,7 +46,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun setupRecyclerView() {
-        passwordAdapter = PasswordAdapter(requireContext(), passwordsViewModel)
+        passwordAdapter = PasswordAdapter(requireContext(), passwordsViewModel, MainActivity(),
+            viewLifecycleOwner)
         binding.rvPasswords.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = passwordAdapter
@@ -54,7 +55,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         activity?.let {
             passwordsViewModel.getAllPW().observe(viewLifecycleOwner) { passwords ->
-                passwordAdapter.differ.submitList(passwords)
+                passwords?.let { passwordAdapter.setPasswords(it) }
                 for(i in passwords){
                     mList.add(i)
                 }
@@ -90,7 +91,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             if(filteredList.isEmpty()){
                 Toast.makeText(requireContext(), "No Data Found", Toast.LENGTH_SHORT).show()
             }else{
-                passwordAdapter.differ.submitList(filteredList)
+                passwordAdapter.setPasswords(filteredList)
             }
         }
 

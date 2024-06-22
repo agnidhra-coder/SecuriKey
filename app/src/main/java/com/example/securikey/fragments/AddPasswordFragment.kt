@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.navigation.findNavController
 import com.example.securikey.MainActivity
 import com.example.securikey.R
+import com.example.securikey.adapters.PasswordAdapter
 import com.example.securikey.crypto.EncryptDecrypt
 import com.example.securikey.databinding.FragmentAddPasswordBinding
 import com.example.securikey.room.Password
@@ -19,11 +20,10 @@ import java.util.Date
 class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_password) {
     private var addPasswordBinding: FragmentAddPasswordBinding? = null
     private val binding get() = addPasswordBinding!!
-//    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
     private lateinit var passwordViewModel: PasswordViewModel
-    private lateinit var combinedData: ByteArray
-    lateinit var iv: ByteArray
+    private val adapter = PasswordAdapter()
+    private var mList = ArrayList<Password>()
 
 
     override fun onCreateView(
@@ -39,11 +39,6 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
         super.onViewCreated(view, savedInstanceState)
 
         passwordViewModel = (activity as MainActivity).passwordViewModel
-
-        /*bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetAddPw)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-        binding.bottomSheetAddPw.minimumHeight = Resources.getSystem().displayMetrics.heightPixels*/
 
         binding.websiteNameEt.setOnFocusChangeListener { _, focused ->
             if(!focused){
@@ -137,7 +132,7 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
         if(!pwText.matches(".*[0-9].*".toRegex())){
             return "Must contain 1 digit"
         }
-        if(!pwText.matches(".*[!@#\$%^&+=\\-_()].*".toRegex())){
+        if(!pwText.matches(".*[!@#\$%^&+=\\-_():;'\"<>?*,./|].*".toRegex())){
             return "Must contain 1 special character"
         }
 
@@ -166,6 +161,12 @@ class AddPasswordFragment : BottomSheetDialogFragment(R.layout.fragment_add_pass
         try {
             val password = Password(0, websiteName, websiteUrl, email, username, cipherText, Date())
             passwordViewModel.insertPW(password)
+//            passwordViewModel.getAllPW().observe(viewLifecycleOwner){
+//                for (i in it){
+//                    mList.add(i)
+//                }
+//            }
+//            adapter.differ.submitList(mList)
             dismiss()
         } catch (e: Exception){
             Log.i("AddPasswordFragment", "$e")

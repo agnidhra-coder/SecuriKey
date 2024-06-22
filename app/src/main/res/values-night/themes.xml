@@ -5,5 +5,12 @@
 <!--         <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="android:background">@color/bgGrey</item>
         <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textColor">#C4C4C4</item>
+        <item name="popupMenuBackground">@drawable/menu_bg</item>
+        <item name="android:popupMenuStyle">@style/popupBGStyle</item>
+    </style>
+
+    <style name="popupBGStyle" parent="Widget.MaterialComponents.PopupMenu">
+        <item name="android:popupBackground">@drawable/menu_bg</item>
     </style>
 </resources>
